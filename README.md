@@ -42,6 +42,32 @@ The rules of the game are as follows:
         * Each process is implemented as a separate docker container
         * The simulations can be spread across multiple physical cores or machines as needed.
         * The degree of concurrency can be tuned by scaling the workers dynamically.
+
+## Execution
+
+``` bash
+python simulation.py
+
+{
+  "conf": {
+    "game_threshold": 3,
+    "points_threshold": 21
+  },
+  "vars": {
+    "a_hold_pct": 0.8,
+    "b_hold_pct": 0.72,
+    "first_server": "a"
+  },
+  "results": {
+    "a_prob": 0.8768,
+    "b_prob": 0.1232
+  },
+  "meta": {
+    "iterations": 10000,
+    "random_first_server": false
+  }
+}
+```
     
 ## Notes
 

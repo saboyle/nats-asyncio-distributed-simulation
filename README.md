@@ -25,13 +25,17 @@ The rules of the game are as follows:
 ## Example implementation(s)
 * Basic
     * Simulation is executed in a single thread, single process
+
 * Multi-process
     * Simulation is executed across multiple processes
-* Distributed (using NATs + Docker)
+
+* Distributed (using NATs + Docker) [UNDER EXPLORATION]
       
-    * Two queues are used:
+    * Queues are used as follows:
         * A simulation queue to hold queued simulation requests
-        * A results queue to hold output match results
+        * A worker pulls a request and replies
+        * The sim aggregates the replies from the reply queues and calculates output probabilities
+       
         
     * Processes
         * A simulation (Worker) listens to the simulation queue

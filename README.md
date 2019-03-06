@@ -20,7 +20,7 @@ The rules of the game are as follows:
 * Server hold percentages for players A and B
 
 ## Outputs
-* A 2-tuple of probabilities
+* A 2-tuple of probabilities (team a (win), team b (win))
 
 ## Example implementation(s)
 * Basic

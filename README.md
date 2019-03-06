@@ -1,4 +1,4 @@
-# Distributed Simulation
+# Distributed Simulation [alpha/exploratory]
 
 Example distributed simulation model for a two player / team adversarial game (e.g. Badminton, Tennis, Volleyball).
 

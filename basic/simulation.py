@@ -37,18 +37,20 @@ def _update_point_server(gamestate, point_winner):
     return gamestate
 
 def sim(conf, vars, iterations, random_first_server = False):
-    logger.debug('================================')
-    logger.debug("Simulation variables:")
-    logger.debug('================================')
-    logger.debug(sim_vars)
-    logger.debug(sim_config)
-    logger.debug('random first server:', random_first_server)
+    logger.info('================================')
+    logger.info("Simulation variables:")
+    logger.info('================================')
+    logger.info(sim_vars)
+    logger.info(sim_config)
+    logger.info(f"random first server:, {random_first_server}")
     logger.debug('================================')
     results = [sim_match(conf, vars, random_first_server) for r in range(iterations)]
     a_count = sum([1 for r in results if r['a_games'] > r['b_games']])
     b_count = sum([1 for r in results if r['a_games'] < r['b_games']])
     r = a_count / (a_count + b_count), b_count / (a_count + b_count)
-    return Results(a_prob=r[0], b_prob=r[1])
+    res = Results(a_prob=r[0], b_prob=r[1])
+    logger.info(f"output probabilities: {json.dumps(res)}")
+    return res
 
 
 def sim_match(conf, vars, random_first_server = False):

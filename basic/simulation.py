@@ -1,5 +1,7 @@
 import collections
 import random
+import logging
+import json
 
 Matchstate = collections.namedtuple('Gamestate', 'a_games b_games server')
 Gamestate = collections.namedtuple('Gamestate', 'a_points b_points server')
@@ -14,29 +16,34 @@ def _is_game_over(conf, gamestate):
     return (gamestate['a_points'] >= conf.points_threshold) or (gamestate['b_points'] >= conf.points_threshold)
 
 def _update_game_server(matchstate):
+    logger.debug(f"End of game: new server, {matchstate['server']}, {matchstate}")
     if matchstate['server'] == 'a':
         matchstate['server'] = 'b'
     else:
         matchstate['server'] = 'a'
+    return matchstate
 
 def _update_point_server(gamestate, point_winner):
     """ Rally point scoring - winner of point becomes server """
     if gamestate['server'] == point_winner:
-        pass
+        logger.debug(f"Serve Held, {gamestate['server']}")
     else:
         if gamestate['server'] == 'a':
-            gamestate['server'] == 'b'
+            logger.debug(f"Change of serve (next B), {gamestate}, {point_winner}")
+            gamestate['server'] = 'b'
         else:
+            logger.debug(f"Change of serve (next A), {gamestate}, {point_winner}")
             gamestate['server'] = 'a'
+    return gamestate
 
 def sim(conf, vars, iterations, random_first_server = False):
-    print('================================')
-    print("Simulation variables:")
-    print('================================')
-    print(sim_vars)
-    print(sim_config)
-    print('random first server:', random_first_server)
-    print('================================')
+    logger.debug('================================')
+    logger.debug("Simulation variables:")
+    logger.debug('================================')
+    logger.debug(sim_vars)
+    logger.debug(sim_config)
+    logger.debug('random first server:', random_first_server)
+    logger.debug('================================')
     results = [sim_match(conf, vars, random_first_server) for r in range(iterations)]
     a_count = sum([1 for r in results if r['a_games'] > r['b_games']])
     b_count = sum([1 for r in results if r['a_games'] < r['b_games']])
@@ -60,7 +67,7 @@ def sim_match(conf, vars, random_first_server = False):
             matchstate['a_games'] += 1
         else:
             matchstate['b_games'] += 1
-        _update_game_server(matchstate)
+        matchstate = _update_game_server(matchstate)
     return matchstate
 
 def sim_game(conf, vars, first_server):
@@ -68,9 +75,16 @@ def sim_game(conf, vars, first_server):
     while _is_game_over(conf, gamestate) == False:
         a_point_win = sim_point(gamestate, vars)
         if a_point_win:
+            point_winner = 'a'
             gamestate['a_points'] += 1
+            logger.debug('A wins point')
         else:
+            point_winner = 'b'
             gamestate['b_points'] += 1
+            logger.debug('B wins point')
+        gamestate =_update_point_server(gamestate, point_winner)
+
+    logger.debug('Game over')
     return gamestate['a_points'] > gamestate['b_points']
 
 def sim_point(gamestate, vars):
@@ -83,8 +97,17 @@ def sim_point(gamestate, vars):
 
 
 if __name__ == "__main__":
-    sim_config = Config(game_threshold=3,
-                        points_threshold=21)  # First to 3 games, with first to 21 points wins the game
-    sim_vars = Variables(a_hold_pct=0.7, b_hold_pct=0.6, first_server='a')
+    logger = logging.getLogger(__name__)
+    logging.basicConfig(level=logging.INFO)
 
-    print(sim(sim_config, sim_vars, 10000, random_first_server=True))
+    sim_config = Config(game_threshold=3, points_threshold=21)  # First to 3 games, with first to 21 points wins the game
+    sim_vars = Variables(a_hold_pct=0.8, b_hold_pct=0.72, first_server='a')
+    sim_iterations = 10000
+    sim_random_first_server = False
+
+    results = sim(sim_config, sim_vars, sim_iterations, random_first_server=sim_random_first_server)
+
+    ret = {'conf': sim_config._asdict(), 'vars': sim_vars._asdict(), 'results': results._asdict(),
+           'meta': {'iterations': sim_iterations, 'random_first_server': sim_random_first_server}}
+    print(json.dumps(ret, indent=2))
+

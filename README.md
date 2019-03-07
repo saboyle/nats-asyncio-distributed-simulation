@@ -26,7 +26,7 @@ The rules of the game are as follows:
 * Basic
     * Simulation is executed in a single thread, single process
 
-* Multi-process
+* Parallel Multi-process
     * Simulation is executed across multiple processes
 
 * Distributed (using NATs + Docker) [UNDER EXPLORATION]
@@ -34,22 +34,27 @@ The rules of the game are as follows:
     * Queues are used as follows:
         * A simulation queue to hold queued simulation requests
         * A worker pulls a request and replies
-        * The sim aggregates the replies from the reply queues and calculates output probabilities
-       
+        * The sim aggregates the replies from the reply queues and calculates output probabilities  
         
     * Processes
+        * A simulator publishes simulation requests to the simulation queue
         * A simulation (Worker) listens to the simulation queue
         * An aggregator listens to the results queue
         
-     * Scalability
+    * Scalability
         * Each process is implemented as a separate docker container
         * The simulations can be spread across multiple physical cores or machines as needed.
         * The degree of concurrency can be tuned by scaling the workers dynamically.
 
 ## Execution
 
+**Note**: the [blocking wait] is to demonstrate how number of requests and amount of blocking affects execution time and
+potential benefits of parallelization.
+
 ``` bash
-python simulation.py
+Usage: python simulation.py [simulation size] [blocking wait]
+
+python simulation.py 10000 0.001
 
 {
   "conf": {

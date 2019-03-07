@@ -2,6 +2,7 @@ import collections
 import random
 import logging
 import json
+import time
 
 Matchstate = collections.namedtuple('Gamestate', 'a_games b_games server')
 Gamestate = collections.namedtuple('Gamestate', 'a_points b_points server')
@@ -54,6 +55,8 @@ def sim(conf, vars, iterations, random_first_server = False):
 
 
 def sim_match(conf, vars, random_first_server = False):
+    time.sleep(DELAY)
+
     if random_first_server:
         if random.random() > 0.5:
             server = 'a'
@@ -99,17 +102,27 @@ def sim_point(gamestate, vars):
 
 
 if __name__ == "__main__":
+    import sys
+
+    if len(sys.argv) < 3:
+        print("Usage python simulation.py [num_iterations] [delay]")
+        exit(0)
+    else:
+        sim_iterations = int(sys.argv[1])
+        sim_delay = float(sys.argv[2])
+
+    DELAY = sim_delay
+
     logger = logging.getLogger(__name__)
     logging.basicConfig(level=logging.ERROR)
 
     sim_config = Config(game_threshold=3, points_threshold=21)  # First to 3 games, with first to 21 points wins the game
     sim_vars = Variables(a_hold_pct=0.8, b_hold_pct=0.72, first_server='a')
-    sim_iterations = 10000
     sim_random_first_server = False
 
     results = sim(sim_config, sim_vars, sim_iterations, random_first_server=sim_random_first_server)
 
     ret = {'conf': sim_config._asdict(), 'vars': sim_vars._asdict(), 'results': results._asdict(),
            'meta': {'iterations': sim_iterations, 'random_first_server': sim_random_first_server}}
-    print(json.dumps(ret, indent=2))
+    print(json.dumps(ret))
 

@@ -29,7 +29,7 @@ The rules of the game are as follows:
 * Parallel Multi-process
     * Simulation is executed across multiple processes
 
-* Distributed (using NATs + Docker) [UNDER EXPLORATION]
+* Distributed (using NATs + Docker) [Future e.g. https://github.com/saboyle/python-nats-pipeline-rest-gateway]
       
     * Queues are used as follows:
         * A simulation queue to hold queued simulation requests

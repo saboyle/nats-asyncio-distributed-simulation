@@ -100,7 +100,7 @@ def sim_point(gamestate, vars):
 
 if __name__ == "__main__":
     logger = logging.getLogger(__name__)
-    logging.basicConfig(level=logging.INFO)
+    logging.basicConfig(level=logging.ERROR)
 
     sim_config = Config(game_threshold=3, points_threshold=21)  # First to 3 games, with first to 21 points wins the game
     sim_vars = Variables(a_hold_pct=0.8, b_hold_pct=0.72, first_server='a')

@@ -50,6 +50,7 @@ async def sim(conf, vars, iterations, random_first_server = False):
     logger.info(f"random first server:, {random_first_server}")
     logger.debug('================================')
 
+    # Create a task for each required sim, spawn tasks for each then gather the results
     task = functools.partial(sim_match, conf, vars, random_first_server)
     tasks = [task() for _t in range(iterations)]
     results = await asyncio.gather(*tasks)

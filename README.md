@@ -28,6 +28,9 @@ The rules of the game are as follows:
 
 * Parallel Multi-process
     * Simulation is executed across multiple processes
+    
+* Async / Non-blocking
+    * Async scatter/gather implementation within a single event loop
 
 * Distributed (using NATs + Docker) [Future e.g. https://github.com/saboyle/python-nats-pipeline-rest-gateway]
       
